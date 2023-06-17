@@ -1,17 +1,19 @@
 const express = require('express')
 const AuthJ = require('authj')
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 const cors = require('cors')
 
+dotenv.config()
 const authj = AuthJ()
-authj.config('MY-KEY')
+authj.config(process.env.JWTSECRETKEY)
 
 const app = express()
 app.use(express.json());
 app.use(cors())
 
 
-mongoose.connect('mongodb+srv://admin-siva:admin-siva@cluster0.a8xkzs5.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODBURL , { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Failed to connect : MongoDB:', err));
 
@@ -24,14 +26,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('UserList', userSchema);
 
-// const user = new User ({username: "siva", password: '1234'})
-
-// user.save()
-// .then((res) => {
-//     console.log(res);
-// })
-
-function auth(req, res, next){
+function isAuth(req, res, next){
     console.log(req.headers.token);
 
     authj.checkToken({token: req.headers.token })
@@ -42,10 +37,10 @@ function auth(req, res, next){
     }).catch((err) => {
         return res.status(401).json({ error: err });
     })
-    //next()
+   
 }
 
-app.get('/userlist' , auth,  (req, res) => {
+app.get('/userlist' , isAuth,  (req, res) => {
     console.log(req.user, 'user details');
     res.json({message : 'successfully'})
 })
