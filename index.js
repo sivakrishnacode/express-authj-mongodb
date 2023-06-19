@@ -4,6 +4,8 @@ import { connect, Schema, model } from 'mongoose'
 import { config } from 'dotenv'
 import cors from 'cors'
 
+import { isAuth } from './Auth/Auth.js'
+
 config()
 const authj = AuthJ()
 authj.config(process.env.JWTSECRETKEY)
@@ -12,7 +14,7 @@ const app = express()
 app.use(json());
 app.use(cors())
 
-
+// connect mongodb
 connect(process.env.MONGODBURL , { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Failed to connect : MongoDB:', err));
@@ -26,27 +28,14 @@ const userSchema = new Schema({
 
 const User = model('UserList', userSchema);
 
-function isAuth(req, res, next){
-    console.log(req.headers.token);
 
-    authj.checkToken({token: req.headers.token })
-    .then((res) => {
-       
-        req.user = res
-        next()
-    }).catch((err) => {
-        return res.status(401).json({ error: err });
-    })
-   
-}
 
 app.get('/userlist' , isAuth,  (req, res) => {
-    console.log(req.user, 'user details');
-    res.json({message : 'successfully'})
+    res.json({message : `Hello ${ req.user.username }`})
 })
 
-
 app.post('/login' , async (req, res) => {
+  console.log('login method');
   const username = req.query.username
   const password = req.query.password
 
@@ -68,7 +57,7 @@ app.post('/login' , async (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-    console.log('login method');
+    console.log('register method');
     const { username , password , emailaddress } = req.query
 
     const olduser = await User.findOne({username })
@@ -89,8 +78,6 @@ app.post('/register', async (req, res) => {
     }
    
 })
-
-
 
 app.listen(3000, () => {
     console.log("Server on 3000 - ###########################");

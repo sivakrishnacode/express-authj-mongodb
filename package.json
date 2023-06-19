@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "authj": "^2.0.0",
+    "authj": "^2.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.0",
     "express": "^4.18.2",
@@ -13,7 +13,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
-  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
