@@ -1,21 +1,17 @@
 import express, { json } from 'express'
 import AuthJ from 'authj'
-import { config } from 'dotenv'
 import cors from 'cors'
 
-import { isAuth } from './Auth/Auth.js'
-import User from './MongoDB/MongoDB.js'
+// utils
+import { isAuth } from './Utils/Auth/Auth.js'
+import User from './Utils/MongoDB/MongoDB.js'
 
-config()
 const authj = AuthJ()
 authj.config(process.env.JWTSECRETKEY)
 
 const app = express()
 app.use(json());
 app.use(cors())
-
-
-
 
 app.get('/userlist' , isAuth,  (req, res) => {
     res.json({message : `Hello ${ req.user.username }`})
