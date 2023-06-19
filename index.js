@@ -1,10 +1,10 @@
 import express, { json } from 'express'
 import AuthJ from 'authj'
-import { connect, Schema, model } from 'mongoose'
 import { config } from 'dotenv'
 import cors from 'cors'
 
 import { isAuth } from './Auth/Auth.js'
+import User from './MongoDB/MongoDB.js'
 
 config()
 const authj = AuthJ()
@@ -14,19 +14,6 @@ const app = express()
 app.use(json());
 app.use(cors())
 
-// connect mongodb
-connect(process.env.MONGODBURL , { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Failed to connect : MongoDB:', err));
-
-// Define the User schema
-const userSchema = new Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  emailaddress : { type: String, required: true }
-});
-
-const User = model('UserList', userSchema);
 
 
 
