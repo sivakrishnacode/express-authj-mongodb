@@ -67,18 +67,27 @@ app.post('/login' , async (req, res) => {
   
 })
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     console.log('login method');
     const { username , password , emailaddress } = req.query
-    const user = new User({username: username, password : password, emailaddress : emailaddress})
 
-    user.save()
-    .then((responce) => {
-        res.status(200)
-        .send({
-            message: `User ${responce.username} Register successfully`
-        })
-    })
+    const olduser = await User.findOne({username })
+    if(olduser){
+      res.status(404).send({
+        error : 'username already exist'
+      })
+    }else{
+      const user = new User({username: username, password : password, emailaddress : emailaddress})
+
+      user.save()
+      .then((responce) => {
+          res.status(200)
+          .send({
+              message: `User ${responce.username} Register successfully`
+          })
+      })
+    }
+   
 })
 
 
