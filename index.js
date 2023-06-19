@@ -22,9 +22,7 @@ app.post('/login' , async (req, res) => {
   console.log('login method');
   const username = req.query.username
   const password = req.query.password
-
   const user = await User.findOne({ username });
-
   if(!user){
     return res.status(401).json({ error: 'username not Found or incorrect' });
   } else if(password != user.password) {
@@ -32,12 +30,9 @@ app.post('/login' , async (req, res) => {
   }else{
     authj.signToken({username: user.username, password : user.password , userDetails: {emailaddress : user.emailaddress}})
     .then((responce) => {
-        
         return res.status(200).json({ header : responce , message : 'Login Succesfully' });
     })
   }
-
-  
 })
 
 app.post('/register', async (req, res) => {
